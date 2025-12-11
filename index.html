@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VScript - Devis Installation Serveur FiveM</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Bibliothèque jsPDF pour générer des PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #0f172a;
+            color: #e2e8f0;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            padding: 2rem 0;
+            border-bottom: 2px solid #334155;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 1rem;
+        }
+        
+        .logo i {
+            font-size: 2.5rem;
+            color: #10b981;
+        }
+        
+        .logo h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(90deg, #10b981, #34d399);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+        
+        .tagline {
+            font-size: 1.2rem;
+            color: #94a3b8;
+            margin-bottom: 2rem;
+        }
+        
+        main {
+            padding: 3rem 0;
+        }
+        
+        .intro {
+            margin-bottom: 3rem;
+            text-align: center;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .intro h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: #f1f5f9;
+        }
+        
+        .intro p {
+            color: #cbd5e1;
+            font-size: 1.1rem;
+        }
+        
+        .calculator {
+            background-color: #1e293b;
+            border-radius: 12px;
+            padding: 2.5rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            margin-bottom: 3rem;
+            border: 1px solid #334155;
+        }
+        
+        .calculator h2 {
+            font-size: 1.8rem;
+            margin-bottom: 2rem;
+            color: #f1f5f9;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .calculator h2 i {
+            color: #10b981;
+        }
+        
+        .installation-base {
+            background-color: #334155;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid #10b981;
+        }
+        
+        .installation-base h3 {
+            font-size: 1.4rem;
+            margin-bottom: 0.8rem;
+            color: #f1f5f9;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .service-option {
+            background-color: #334155;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid #3b82f6;
+        }
+        
+        .service-option h3 {
+            font-size: 1.4rem;
+            margin-bottom: 0.8rem;
+            color: #f1f5f9;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .service-option p {
+            color: #cbd5e1;
+            margin-bottom: 1rem;
+        }
+        
+        .option-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .checkbox-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .checkbox-control input {
+            width: 22px;
+            height: 22px;
+            cursor: pointer;
+            accent-color: #10b981;
+        }
+        
+        .checkbox-control label {
+            font-size: 1.1rem;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        
+        .price {
+            font-weight: bold;
+            font-size: 1.3rem;
+            color: #10b981;
+        }
+        
+        .summary {
+            background-color: #334155;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-top: 2rem;
+            border: 1px solid #475569;
+        }
+        
+        .summary h3 {
+            font-size: 1.6rem;
+            margin-bottom: 1.5rem;
+            color: #f1f5f9;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .summary h3 i {
+            color: #10b981;
+        }
+        
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.8rem 0;
+            border-bottom: 1px solid #475569;
+        }
+        
+        .summary-item:last-child {
+            border-bottom: none;
+        }
+        
+        .summary-total {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #f1f5f9;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 2px solid #10b981;
+        }
+        
+        .time-estimate {
+            color: #60a5fa;
+            font-size: 1.1rem;
+            margin-top: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .btn-primary {
+            background-color: #10b981;
+            color: white;
+            flex: 1;
+        }
+        
+        .btn-primary:hover {
+            background-color: #0da271;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
+        }
+        
+        .btn-secondary {
+            background-color: #475569;
+            color: white;
+            flex: 1;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #334155;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 2rem 0;
+            border-top: 1px solid #334155;
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+        
+        .note {
+            font-style: italic;
+            color: #94a3b8;
+            margin-top: 1.5rem;
+            font-size: 0.95rem;
+        }
+        
+        .required {
+            color: #ef4444;
+            font-weight: bold;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 15px;
+            }
+            
+            .calculator {
+                padding: 1.5rem;
+            }
+            
+            .logo h1 {
+                font-size: 2rem;
+            }
+            
+            .actions {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+            
+            .option-controls {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .price {
+                margin-left: 32px; /* Aligner avec le texte après la checkbox */
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <i class="fas fa-code"></i>
+                <h1>VScript</h1>
+            </div>
+            <p class="tagline">Installation professionnelle de serveurs FiveM avec options personnalisées</p>
+        </div>
+    </header>
+    
+    <main>
+        <div class="container">
+            <div class="intro">
+                <h2>Générez votre devis personnalisé</h2>
+                <p>Sélectionnez les options souhaitées pour votre serveur FiveM et obtenez instantanément un devis détaillé avec estimation du temps d'installation.</p>
+            </div>
+            
+            <div class="calculator">
+                <h2><i class="fas fa-calculator"></i> Calculateur de Devis</h2>
+                
+                <div class="installation-base">
+                    <h3><i class="fas fa-server"></i> Installation de base du serveur</h3>
+                    <div class="option-controls">
+                        <div class="checkbox-control">
+                            <input type="checkbox" id="base-installation" checked disabled>
+                            <label for="base-installation">Installation de base du serveur FiveM <span class="required">(obligatoire)</span></label>
+                        </div>
+                        <div class="price" id="base-price">19,99€</div>
+                    </div>
+                </div>
+                
+                <div class="service-option">
+                    <h3><i class="fas fa-tshirt"></i> Pack de vêtements</h3>
+                    <p>Installation d'un pack de vêtements personnalisé pour votre serveur.</p>
+                    <div class="option-controls">
+                        <div class="checkbox-control">
+                            <input type="checkbox" id="clothes-checkbox">
+                            <label for="clothes-checkbox">Inclure cette option (15€)</label>
+                        </div>
+                        <div class="price" id="clothes-price">0€</div>
+                    </div>
+                </div>
+                
+                <div class="service-option">
+                    <h3><i class="fas fa-book"></i> Pack Lore Friendly</h3>
+                    <p>Installation d'un pack lore friendly pour une immersion optimale.</p>
+                    <div class="option-controls">
+                        <div class="checkbox-control">
+                            <input type="checkbox" id="lore-checkbox">
+                            <label for="lore-checkbox">Inclure cette option (5€)</label>
+                        </div>
+                        <div class="price" id="lore-price">0€</div>
+                    </div>
+                </div>
+                
+                <div class="service-option">
+                    <h3><i class="fas fa-broadcast-tower"></i> Installation de la MM_Radio</h3>
+                    <p>Installation et configuration du système de radio pour votre serveur.</p>
+                    <div class="option-controls">
+                        <div class="checkbox-control">
+                            <input type="checkbox" id="radio-checkbox">
+                            <label for="radio-checkbox">Inclure cette option (10€)</label>
+                        </div>
+                        <div class="price" id="radio-price">0€</div>
+                    </div>
+                </div>
+                
+                <div class="summary">
+                    <h3><i class="fas fa-file-invoice-dollar"></i> Récapitulatif du Devis</h3>
+                    
+                    <div class="summary-item">
+                        <span>Installation de base:</span>
+                        <span id="summary-base">19,99€</span>
+                    </div>
+                    
+                    <div class="summary-item">
+                        <span>Pack de vêtements:</span>
+                        <span id="summary-clothes">Non inclus = 0€</span>
+                    </div>
+                    
+                    <div class="summary-item">
+                        <span>Pack Lore Friendly:</span>
+                        <span id="summary-lore">Non inclus = 0€</span>
+                    </div>
+                    
+                    <div class="summary-item">
+                        <span>Installation MM_Radio:</span>
+                        <span id="summary-radio">Non inclus = 0€</span>
+                    </div>
+                    
+                    <div class="summary-item summary-total">
+                        <span>Total TTC:</span>
+                        <span id="total-price">19,99€</span>
+                    </div>
+                    
+                    <div class="time-estimate">
+                        <i class="fas fa-clock"></i> Temps d'installation estimé: <span id="time-estimate">30 minutes</span>
+                    </div>
+                    
+                    <p class="note">Note: Le temps d'installation peut varier en fonction de la complexité de votre serveur et de votre configuration. Les prix sont indiqués TTC.</p>
+                    
+                    <div class="actions">
+                        <button class="btn btn-primary" id="generate-pdf">
+                            <i class="fas fa-file-pdf"></i> Télécharger le devis (PDF)
+                        </button>
+                        <button class="btn btn-secondary" id="reset-calculator">
+                            <i class="fas fa-redo"></i> Réinitialiser
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <footer>
+        <div class="container">
+            <p>VScript - Installation de serveurs FiveM</p>
+            <p>© 2023 - Hébergement gratuit sur GitHub Pages</p>
+        </div>
+    </footer>
+
+    <script>
+        // Prix des services
+        const PRICES = {
+            base: 19.99,
+            clothes: 15.00,
+            lore: 5.00,
+            radio: 10.00
+        };
+        
+        // Temps d'installation (en minutes)
+        const INSTALL_TIMES = {
+            base: 30,
+            clothes: 30,
+            lore: 20,
+            radio: 45
+        };
+        
+        // Éléments du DOM
+        const basePriceElement = document.getElementById('base-price');
+        const baseCheckbox = document.getElementById('base-installation');
+        
+        const clothesPriceElement = document.getElementById('clothes-price');
+        const clothesCheckbox = document.getElementById('clothes-checkbox');
+        
+        const lorePriceElement = document.getElementById('lore-price');
+        const loreCheckbox = document.getElementById('lore-checkbox');
+        
+        const radioPriceElement = document.getElementById('radio-price');
+        const radioCheckbox = document.getElementById('radio-checkbox');
+        
+        const summaryBase = document.getElementById('summary-base');
+        const summaryClothes = document.getElementById('summary-clothes');
+        const summaryLore = document.getElementById('summary-lore');
+        const summaryRadio = document.getElementById('summary-radio');
+        const totalPriceElement = document.getElementById('total-price');
+        const timeEstimateElement = document.getElementById('time-estimate');
+        
+        const generatePdfBtn = document.getElementById('generate-pdf');
+        const resetBtn = document.getElementById('reset-calculator');
+        
+        // Variables d'état
+        let baseIncluded = true;
+        let clothesIncluded = false;
+        let loreIncluded = false;
+        let radioIncluded = false;
+        
+        // Mise à jour de l'affichage
+        function updateDisplay() {
+            // Calculer les prix
+            const baseTotal = baseIncluded ? PRICES.base : 0;
+            const clothesTotal = clothesIncluded ? PRICES.clothes : 0;
+            const loreTotal = loreIncluded ? PRICES.lore : 0;
+            const radioTotal = radioIncluded ? PRICES.radio : 0;
+            const total = baseTotal + clothesTotal + loreTotal + radioTotal;
+            
+            // Mettre à jour les prix affichés
+            basePriceElement.textContent = baseTotal.toFixed(2) + '€';
+            clothesPriceElement.textContent = clothesIncluded ? PRICES.clothes.toFixed(2) + '€' : '0€';
+            lorePriceElement.textContent = loreIncluded ? PRICES.lore.toFixed(2) + '€' : '0€';
+            radioPriceElement.textContent = radioIncluded ? PRICES.radio.toFixed(2) + '€' : '0€';
+            
+            // Mettre à jour le récapitulatif
+            summaryBase.textContent = baseTotal.toFixed(2) + '€';
+            summaryClothes.textContent = clothesIncluded ? `Inclus = ${PRICES.clothes.toFixed(2)}€` : `Non inclus = 0€`;
+            summaryLore.textContent = loreIncluded ? `Inclus = ${PRICES.lore.toFixed(2)}€` : `Non inclus = 0€`;
+            summaryRadio.textContent = radioIncluded ? `Inclus = ${PRICES.radio.toFixed(2)}€` : `Non inclus = 0€`;
+            totalPriceElement.textContent = total.toFixed(2) + '€';
+            
+            // Calculer le temps estimé
+            let totalMinutes = 0;
+            totalMinutes += baseIncluded ? INSTALL_TIMES.base : 0;
+            totalMinutes += clothesIncluded ? INSTALL_TIMES.clothes : 0;
+            totalMinutes += loreIncluded ? INSTALL_TIMES.lore : 0;
+            totalMinutes += radioIncluded ? INSTALL_TIMES.radio : 0;
+            
+            // Convertir en heures/minutes
+            const hours = Math.floor(totalMinutes / 60);
+            const minutes = totalMinutes % 60;
+            
+            // Formater l'affichage du temps
+            let timeText = '';
+            if (hours > 0) {
+                timeText += `${hours} heure${hours > 1 ? 's' : ''}`;
+            }
+            if (minutes > 0) {
+                if (timeText !== '') timeText += ' et ';
+                timeText += `${minutes} minute${minutes > 1 ? 's' : ''}`;
+            }
+            if (totalMinutes === 0) {
+                timeText = '0 minute';
+            }
+            
+            timeEstimateElement.textContent = timeText;
+        }
+        
+        // Gestionnaires d'événements pour les cases à cocher
+        clothesCheckbox.addEventListener('change', () => {
+            clothesIncluded = clothesCheckbox.checked;
+            updateDisplay();
+        });
+        
+        loreCheckbox.addEventListener('change', () => {
+            loreIncluded = loreCheckbox.checked;
+            updateDisplay();
+        });
+        
+        radioCheckbox.addEventListener('change', () => {
+            radioIncluded = radioCheckbox.checked;
+            updateDisplay();
+        });
+        
+        // Réinitialisation du calculateur
+        resetBtn.addEventListener('click', () => {
+            clothesIncluded = false;
+            loreIncluded = false;
+            radioIncluded = false;
+            
+            clothesCheckbox.checked = false;
+            loreCheckbox.checked = false;
+            radioCheckbox.checked = false;
+            
+            updateDisplay();
+        });
+        
+        // Génération du PDF avec jsPDF
+        generatePdfBtn.addEventListener('click', () => {
+            // Récupérer les données du devis
+            const total = document.getElementById('total-price').textContent;
+            const time = document.getElementById('time-estimate').textContent;
+            const date = new Date().toLocaleDateString('fr-FR');
+            const devisNumber = 'DEV' + Date.now().toString().substring(7);
+            
+            // Initialiser jsPDF
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            // Logo et en-tête
+            doc.setFillColor(16, 185, 129);
+            doc.rect(10, 10, 190, 15, 'F');
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(24);
+            doc.setFont("helvetica", "bold");
+            doc.text("VScript", 105, 20, { align: 'center' });
+            
+            doc.setTextColor(0, 0, 0);
+            doc.setFontSize(16);
+            doc.text("DEVIS D'INSTALLATION SERVEUR FIVEM", 105, 35, { align: 'center' });
+            
+            // Informations du devis
+            doc.setFontSize(11);
+            doc.setFont("helvetica", "normal");
+            doc.text(`Date: ${date}`, 20, 50);
+            doc.text(`Devis N°: ${devisNumber}`, 20, 57);
+            doc.text("Validité: 30 jours", 160, 50);
+            
+            // Ligne de séparation
+            doc.setDrawColor(16, 185, 129);
+            doc.setLineWidth(0.5);
+            doc.line(20, 65, 190, 65);
+            
+            // Détails du devis - Tableau
+            const tableData = [];
+            tableData.push(['Description', 'Prix unitaire', 'Quantité', 'Total HT']);
+            
+            // Installation de base (toujours incluse)
+            tableData.push([
+                'Installation de base du serveur FiveM', 
+                '19,99 €', 
+                '1', 
+                '19,99 €'
+            ]);
+            
+            // Options sélectionnées
+            if (clothesIncluded) {
+                tableData.push([
+                    'Pack de vêtements personnalisé', 
+                    '15,00 €', 
+                    '1', 
+                    '15,00 €'
+                ]);
+            }
+            
+            if (loreIncluded) {
+                tableData.push([
+                    'Pack Lore Friendly', 
+                    '5,00 €', 
+                    '1', 
+                    '5,00 €'
+                ]);
+            }
+            
+            if (radioIncluded) {
+                tableData.push([
+                    'Installation et configuration MM_Radio', 
+                    '10,00 €', 
+                    '1', 
+                    '10,00 €'
+                ]);
+            }
+            
+            // Créer le tableau
+            doc.autoTable({
+                startY: 75,
+                head: [tableData[0]],
+                body: tableData.slice(1),
+                theme: 'grid',
+                headStyles: { fillColor: [16, 185, 129], textColor: [255, 255, 255] },
+                margin: { left: 20, right: 20 },
+                columnStyles: {
+                    0: { cellWidth: 90 },
+                    1: { cellWidth: 30 },
+                    2: { cellWidth: 25 },
+                    3: { cellWidth: 25 }
+                }
+            });
+            
+            // Récupérer la position Y après le tableau
+            const finalY = doc.lastAutoTable.finalY + 10;
+            
+            // Total
+            doc.setFontSize(12);
+            doc.setFont("helvetica", "bold");
+            doc.text("Total TTC:", 140, finalY);
+            doc.text(total, 180, finalY, { align: 'right' });
+            
+            // Temps d'installation
+            doc.setFont("helvetica", "normal");
+            doc.text(`Temps d'installation estimé: ${time}`, 20, finalY + 15);
+            
+            // Notes et conditions
+            doc.setFontSize(10);
+            doc.text("Notes:", 20, finalY + 30);
+            doc.setFont("helvetica", "italic");
+            doc.text("Le temps d'installation peut varier en fonction de la complexité du serveur et de la configuration.", 20, finalY + 37, { maxWidth: 170 });
+            doc.text("Les prix sont indiqués TTC (Toutes Taxes Comprises).", 20, finalY + 47, { maxWidth: 170 });
+            
+            // Signature
+            doc.setFont("helvetica", "bold");
+            doc.text("Pour VScript,", 20, finalY + 70);
+            doc.line(20, finalY + 75, 80, finalY + 75);
+            doc.setFont("helvetica", "normal");
+            doc.text("Signature", 45, finalY + 80);
+            
+            // Sauvegarder le PDF
+            const fileName = `Devis_VScript_${devisNumber}.pdf`;
+            doc.save(fileName);
+        });
+        
+        // Initialisation
+        updateDisplay();
+    </script>
+</body>
+</html>
