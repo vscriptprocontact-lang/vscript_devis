@@ -130,6 +130,7 @@
             padding: 1.5rem;
             margin-bottom: 1.5rem;
             border-left: 4px solid #3b82f6;
+            position: relative;
         }
         
         .service-option h3 {
@@ -176,6 +177,66 @@
             font-weight: bold;
             font-size: 1.3rem;
             color: #10b981;
+        }
+        
+        /* Style pour les infobulles */
+        .info-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+            height: 20px;
+            background-color: #3b82f6;
+            color: white;
+            border-radius: 50%;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-left: 8px;
+            cursor: help;
+            position: relative;
+            transition: background-color 0.2s;
+        }
+        
+        .info-icon:hover {
+            background-color: #2563eb;
+        }
+        
+        .tooltip {
+            position: absolute;
+            background-color: #1e293b;
+            color: #e2e8f0;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            width: 280px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            z-index: 100;
+            border: 1px solid #475569;
+            line-height: 1.5;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+            top: 100%;
+            left: 0;
+            margin-top: 10px;
+        }
+        
+        .tooltip::before {
+            content: '';
+            position: absolute;
+            top: -6px;
+            left: 15px;
+            width: 12px;
+            height: 12px;
+            background-color: #1e293b;
+            transform: rotate(45deg);
+            border-left: 1px solid #475569;
+            border-top: 1px solid #475569;
+        }
+        
+        .info-icon:hover .tooltip {
+            opacity: 1;
+            visibility: visible;
         }
         
         .summary {
@@ -319,7 +380,27 @@
             }
             
             .price {
-                margin-left: 32px; /* Aligner avec le texte après la checkbox */
+                margin-left: 32px;
+            }
+            
+            .tooltip {
+                width: 250px;
+                left: -100px;
+            }
+            
+            .tooltip::before {
+                left: 110px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .tooltip {
+                width: 200px;
+                left: -80px;
+            }
+            
+            .tooltip::before {
+                left: 90px;
             }
         }
     </style>
@@ -357,7 +438,14 @@
                 </div>
                 
                 <div class="service-option">
-                    <h3><i class="fas fa-tshirt"></i> Pack de vêtements</h3>
+                    <h3><i class="fas fa-tshirt"></i> Pack de vêtements
+                        <span class="info-icon">
+                            i
+                            <div class="tooltip">
+                                Ce pack de vêtements contient des coupes de tout type avec plus de 10 000 fichiers ! Une collection complète pour personnaliser l'apparence de vos personnages.
+                            </div>
+                        </span>
+                    </h3>
                     <p>Installation d'un pack de vêtements personnalisé pour votre serveur.</p>
                     <div class="option-controls">
                         <div class="checkbox-control">
@@ -369,7 +457,14 @@
                 </div>
                 
                 <div class="service-option">
-                    <h3><i class="fas fa-book"></i> Pack Lore Friendly</h3>
+                    <h3><i class="fas fa-book"></i> Pack Lore Friendly
+                        <span class="info-icon">
+                            i
+                            <div class="tooltip">
+                                Ce pack Lore Friendly comprend plus de 70 véhicules optimisés qui s'intègrent parfaitement dans l'univers du jeu. Tous les modèles respectent l'ambiance et le style du monde de FiveM.
+                            </div>
+                        </span>
+                    </h3>
                     <p>Installation d'un pack lore friendly pour une immersion optimale.</p>
                     <div class="option-controls">
                         <div class="checkbox-control">
@@ -381,7 +476,14 @@
                 </div>
                 
                 <div class="service-option">
-                    <h3><i class="fas fa-broadcast-tower"></i> Installation de la MM_Radio</h3>
+                    <h3><i class="fas fa-broadcast-tower"></i> Installation de la MM_Radio
+                        <span class="info-icon">
+                            i
+                            <div class="tooltip">
+                                La MM_Radio est une radio utilisée par de nombreux serveurs, réputée pour sa praticité et ses fonctionnalités parfaites. Son installation peut s'avérer complexe sans expertise technique.
+                            </div>
+                        </span>
+                    </h3>
                     <p>Installation et configuration du système de radio pour votre serveur.</p>
                     <div class="option-controls">
                         <div class="checkbox-control">
@@ -621,7 +723,7 @@
             // Options sélectionnées
             if (clothesIncluded) {
                 tableData.push([
-                    'Pack de vêtements personnalisé', 
+                    'Pack de vêtements personnalisé (plus de 10 000 fichiers)', 
                     '15,00 €', 
                     '1', 
                     '15,00 €'
@@ -630,7 +732,7 @@
             
             if (loreIncluded) {
                 tableData.push([
-                    'Pack Lore Friendly', 
+                    'Pack Lore Friendly (70+ véhicules optimisés)', 
                     '5,00 €', 
                     '1', 
                     '5,00 €'
@@ -682,12 +784,33 @@
             doc.text("Le temps d'installation peut varier en fonction de la complexité du serveur et de la configuration.", 20, finalY + 37, { maxWidth: 170 });
             doc.text("Les prix sont indiqués TTC (Toutes Taxes Comprises).", 20, finalY + 47, { maxWidth: 170 });
             
+            // Détails des options incluses
+            if (clothesIncluded || loreIncluded || radioIncluded) {
+                doc.setFont("helvetica", "bold");
+                doc.text("Détails des options:", 20, finalY + 65);
+                doc.setFont("helvetica", "normal");
+                doc.setFontSize(9);
+                
+                let detailsY = finalY + 72;
+                if (clothesIncluded) {
+                    doc.text("- Pack vêtements: Contient plus de 10 000 fichiers pour une personnalisation complète", 20, detailsY, { maxWidth: 170 });
+                    detailsY += 7;
+                }
+                if (loreIncluded) {
+                    doc.text("- Pack Lore Friendly: Plus de 70 véhicules optimisés intégrés parfaitement à l'univers du jeu", 20, detailsY, { maxWidth: 170 });
+                    detailsY += 7;
+                }
+                if (radioIncluded) {
+                    doc.text("- MM_Radio: Système de radio réputé pour sa praticité, installation complexe sans expertise", 20, detailsY, { maxWidth: 170 });
+                }
+            }
+            
             // Signature
             doc.setFont("helvetica", "bold");
-            doc.text("Pour VScript,", 20, finalY + 70);
-            doc.line(20, finalY + 75, 80, finalY + 75);
+            doc.text("Pour VScript,", 20, finalY + 90);
+            doc.line(20, finalY + 95, 80, finalY + 95);
             doc.setFont("helvetica", "normal");
-            doc.text("Signature", 45, finalY + 80);
+            doc.text("Signature", 45, finalY + 100);
             
             // Sauvegarder le PDF
             const fileName = `Devis_VScript_${devisNumber}.pdf`;
